@@ -1,0 +1,72 @@
+    .include "p30F3013.inc"
+
+    .GLOBAL _writeADXL345
+    .GLOBAL _readADXL345
+    .GLOBAL _RW_SP1
+    .GLOBAL _bin2cad
+;/**@brief ESTA ES LA ISR DEL TIMER
+; *
+; */	
+_writeADXL345:
+	
+	AND	#0X00FF,	W1
+	SL	W0, #8,	W0
+	IOR	W0, W1,	W0
+	
+	BCLR	PORTB, #RB9
+	CALL	_RW_SP1
+	BSET	PORTB, #RB9
+	RETURN
+
+_readADXL345:
+	IOR	#0X0080,	W0
+	SL	W0, #8,	W0
+	BCLR	PORTB, #RB9
+	CALL	_RW_SP1
+	BSET	PORTB, #RB9
+	AND	#0X00FF,	W0
+	RETURN
+	
+_RW_SP1:
+	BCLR	IFS0, #SPI1IF
+	MOV	W0,	SPI1BUF	
+	NOP
+CHECK:
+	BTSS    IFS0,	#SPI1IF	    ;POLLING
+	GOTO    CHECK
+	MOV	SPI1BUF,    W0	
+	RETURN
+	
+_bin2cad:
+	BTSC    W0,	#15	    ;If cero skip
+	GOTO	Negativo
+	MOV	#0X2b, W4
+	GOTO    lNICIO
+lNICIO:
+	MOV.B	W4, [W1++]
+	MOV	#0X30, W4
+	REPEAT	#3
+	MOV.B	W4, [W1++]
+	CLR	W4
+	MOV.B	W4, [W1--]
+	MOV	W1, W2
+	MOV	#10, W3
+	
+DIVISION:
+	CLR	W1
+	
+	DISI	#19
+	REPEAT	#17
+	DIV.U	W0, W3
+	
+	ADD	#0X30, W1
+	MOV.B	W1, [W2--]
+	
+	CPSEQ	W0, W4;POLLING
+	GOTO	DIVISION
+	
+	RETURN
+Negativo:
+	MOV	#0X2d, W4
+	NEG	W0,W0
+	GOTO	lNICIO
