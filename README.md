@@ -9,6 +9,6 @@ Listado de Practicas:
 - Practica 5.- LCD. Impresion del mensaje IPN en un LCD de 16x2.
 - Practica 7.- RTC (Real time clock). Mostar hora en un LCD de 16x2, usando un cristal externo.
 - Practica 8.- UART. Comuinicacion Computadora-micro mediante UART, desplegando una cadena ingresada mediante un programa en C (serial.c).
-- Practica 9.- SPI. Se uso un acelerometro y se despliega la informacion tanto en la linea de comandos de Linux como en el LCD.
+- Practica 9.- SPI. Se uso un acelerometro y se despliega la informacion tanto en la linea de comandos de Linux como en el LCD (serialspi.c).
 
 **Microcontrolador usado:** *dspic30f3013-30i/sp*.
